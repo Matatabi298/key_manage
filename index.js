@@ -3,25 +3,34 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent
   ]
 });
 
-// Botが起動したとき
+// 起動確認
 client.once('ready', () => {
   console.log(`ログイン成功: ${client.user.tag}`);
 });
 
-// 新しいメンバーが入ったとき
-client.on('guildMemberAdd', member => {
-  const channel = member.guild.channels.cache.find(
-    ch => ch.name === "general" // ←チャンネル名変更OK
-  );
+// メッセージ受信
+client.on('messageCreate', message => {
+  // Bot自身は無視
+  if (message.author.bot) return;
 
-  if (channel) {
-    channel.send(`<@${member.id}> ようこそ！🎉`);
+  // コマンド①
+  if (message.content === '!ping') {
+    message.reply('pong!');
+  }
+
+  // コマンド②
+  if (message.content.includes('こんにちは')) {
+    message.reply(`こんにちは！ <@${message.author.id}>`);
+  }
+
+  // メンションされたら
+  if (message.mentions.has(client.user)) {
+    message.reply('呼んだ？👀');
   }
 });
 
