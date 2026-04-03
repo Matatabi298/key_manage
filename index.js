@@ -25,7 +25,7 @@ client.once('ready', async () => {
   const row = new ActionRowBuilder().addComponents(borrowButton);
 
   await channel.send({
-    content: 'このアイテムを借りますか？',
+    content: '鍵を借りましたか？',
     components: [row]
   });
 });
