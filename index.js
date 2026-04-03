@@ -19,7 +19,7 @@ client.once('ready', async () => {
 
   const borrowButton = new ButtonBuilder()
     .setCustomId('borrow')
-    .setLabel('借りる')
+    .setLabel('借りた！')
     .setStyle(ButtonStyle.Primary);
 
   const row = new ActionRowBuilder().addComponents(borrowButton);
@@ -38,7 +38,7 @@ client.on(Events.InteractionCreate, async interaction => {
   if (interaction.customId === 'borrow') {
     const returnButton = new ButtonBuilder()
       .setCustomId('return')
-      .setLabel('返す')
+      .setLabel('返した！')
       .setStyle(ButtonStyle.Danger);
 
     const row = new ActionRowBuilder().addComponents(returnButton);
@@ -53,13 +53,13 @@ client.on(Events.InteractionCreate, async interaction => {
   if (interaction.customId === 'return') {
     const borrowButton = new ButtonBuilder()
       .setCustomId('borrow')
-      .setLabel('借りる')
+      .setLabel('借りた！')
       .setStyle(ButtonStyle.Primary);
 
     const row = new ActionRowBuilder().addComponents(borrowButton);
 
     await interaction.update({
-      content: 'このアイテムを借りますか？',
+      content: '鍵を借りましたか？',
       components: [row]
     });
   }
