@@ -1,36 +1,67 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const {
+  Client,
+  GatewayIntentBits,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  Events
+} = require('discord.js');
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ]
+  intents: [GatewayIntentBits.Guilds]
 });
 
-// 起動確認
-client.once('ready', () => {
+// 起動時にメッセージ送る（初期状態）
+client.once('ready', async () => {
   console.log(`ログイン成功: ${client.user.tag}`);
+
+  const channel = await client.channels.fetch('チャンネルID');
+
+  const borrowButton = new ButtonBuilder()
+    .setCustomId('borrow')
+    .setLabel('借りる')
+    .setStyle(ButtonStyle.Primary);
+
+  const row = new ActionRowBuilder().addComponents(borrowButton);
+
+  await channel.send({
+    content: 'このアイテムを借りますか？',
+    components: [row]
+  });
 });
 
-// メッセージ受信
-client.on('messageCreate', message => {
-  // Bot自身は無視
-  if (message.author.bot) return;
+// ボタン処理
+client.on(Events.InteractionCreate, async interaction => {
+  if (!interaction.isButton()) return;
 
-  // コマンド①
-  if (message.content === '!ping') {
-    message.reply('pong!');
+  // 借りるボタン
+  if (interaction.customId === 'borrow') {
+    const returnButton = new ButtonBuilder()
+      .setCustomId('return')
+      .setLabel('返す')
+      .setStyle(ButtonStyle.Danger);
+
+    const row = new ActionRowBuilder().addComponents(returnButton);
+
+    await interaction.update({
+      content: `<@${interaction.user.id}> が借りました`,
+      components: [row]
+    });
   }
 
-  // コマンド②
-  if (message.content.includes('こんにちは')) {
-    message.reply(`こんにちは！ <@${message.author.id}>`);
-  }
+  // 返すボタン
+  if (interaction.customId === 'return') {
+    const borrowButton = new ButtonBuilder()
+      .setCustomId('borrow')
+      .setLabel('借りる')
+      .setStyle(ButtonStyle.Primary);
 
-  // メンションされたら
-  if (message.mentions.has(client.user)) {
-    message.reply('呼んだ？👀');
+    const row = new ActionRowBuilder().addComponents(borrowButton);
+
+    await interaction.update({
+      content: 'このアイテムを借りますか？',
+      components: [row]
+    });
   }
 });
 
