@@ -18,7 +18,7 @@ let currentUserId = null;
 client.once('ready', async () => {
   console.log(`ログイン成功: ${client.user.tag}`);
 
-  const channel = await client.channels.fetch('1002571024627413032');
+  const channel = await client.channels.fetch('1489681970027040970');
 
   const borrowButton = new ButtonBuilder()
     .setCustomId('borrow')
