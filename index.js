@@ -8,43 +8,6 @@ const {
 } = require('discord.js');
 
 
-function scheduleNotification(channel) {
-
-  function getNowJST() {
-    return new Date(
-      new Date().toLocaleString("en-US", { timeZone: "Asia/Tokyo" })
-    );
-  }
-
-  const now = getNowJST();
-
-  // 今日の21:10（日本時間）
-  let target = getNowJST();
-  target.setHours(16, 35, 0, 0);
-
-  // すでに過ぎていたら翌日
-  if (now > target) {
-    target.setDate(target.getDate() + 1);
-  }
-
-  const delay = target - now;
-
-  setTimeout(() => {
-
-    if (currentUserId) {
-        return interaction.reply({
-        content: '鍵の返却大丈夫？',
-        ephemeral: true // ←本人だけに表示
-        });
-    }
-
-    // 次の日の分を再セット
-    scheduleNotification(channel);
-
-  }, delay);
-}
-
-
 const client = new Client({
   intents: [GatewayIntentBits.Guilds]
 });
@@ -57,9 +20,6 @@ client.once('ready', async () => {
   console.log(`ログイン成功: ${client.user.tag}`);
 
   const channel = await client.channels.fetch('1489681970027040970');
-
-  // 👇ここに入れる！！
-  scheduleNotification(channel);
 
   const borrowButton = new ButtonBuilder()
     .setCustomId('borrow')
