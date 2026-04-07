@@ -22,7 +22,7 @@ client.once('ready', async () => {
 
   const borrowButton = new ButtonBuilder()
     .setCustomId('borrow')
-    .setLabel('借りる')
+    .setLabel('借りた！')
     .setStyle(ButtonStyle.Primary);
 
   const row = new ActionRowBuilder().addComponents(borrowButton);
@@ -44,7 +44,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('return')
-        .setLabel('返す')
+        .setLabel('返した！')
         .setStyle(ButtonStyle.Danger),
       new ButtonBuilder()
         .setCustomId('swap')
@@ -67,7 +67,7 @@ client.on(Events.InteractionCreate, async interaction => {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('return')
-        .setLabel('返す')
+        .setLabel('返した！')
         .setStyle(ButtonStyle.Danger),
       new ButtonBuilder()
         .setCustomId('swap')
@@ -83,20 +83,29 @@ client.on(Events.InteractionCreate, async interaction => {
 
   // 返す
   if (interaction.customId === 'return') {
+    // 🔒 本人チェック
+    if (interaction.user.id !== currentUserId) {
+        return interaction.reply({
+        content: '借りている人しか返せません',
+        ephemeral: true // ←本人だけに表示
+        });
+    }
+
+    // OKなら返却処理
     currentUserId = null;
 
     const borrowButton = new ButtonBuilder()
-      .setCustomId('borrow')
-      .setLabel('借りる')
-      .setStyle(ButtonStyle.Primary);
+        .setCustomId('borrow')
+        .setLabel('借りた！')
+        .setStyle(ButtonStyle.Primary);
 
     const row = new ActionRowBuilder().addComponents(borrowButton);
 
     await interaction.update({
-      content: '鍵を借りますか？',
-      components: [row]
+        content: '鍵を借りますか？',
+        components: [row]
     });
-  }
+    }  
 });
 
 client.login(process.env.TOKEN);
